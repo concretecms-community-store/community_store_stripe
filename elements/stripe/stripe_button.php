@@ -15,8 +15,6 @@
         });
 
         $('.store-btn-complete-order').on('click', function (e) {
-
-
             // Open Checkout with further options
             var currentpmid = $('input[name="payment-method"]:checked:first').data('payment-method-id');
 
@@ -24,17 +22,15 @@
                 handler.open({
                     currency: "<?= strtolower($currency);?>",
                     amount: <?= $amount; ?>,
-                    email: <?=  ($email ? "'" . $email . "'" : '$(\'#store-email\').val()'); ?>
+                    email: $('#store-email').val() ? $('#store-email').val() : '<?= ($email); ?>'
                 });
                 e.preventDefault();
             }
-
-            // Close Checkout on page navigation
-            $(window).on('popstate', function () {
-                handler.close();
-            });
         });
 
-
+        // Close Checkout on page navigation
+        $(window).on('popstate', function () {
+            handler.close();
+        });
     });
 </script>
