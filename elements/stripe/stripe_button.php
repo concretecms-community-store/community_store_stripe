@@ -21,7 +21,7 @@
 
             if (currentpmid == <?= $pmID; ?>) {
                 handler.open({
-                    currency: "aud",
+                    currency: "<?= strtolower($currency);?>",
                     amount: <?= $amount; ?>
                 });
                 e.preventDefault();
