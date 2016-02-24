@@ -21,7 +21,7 @@
             if (currentpmid == <?= $pmID; ?>) {
                 handler.open({
                     currency: "<?= strtolower($currency);?>",
-                    amount: <?= $amount; ?>,
+                    amount: $('.store-total-amount').data('total-cents') ?  $('.store-total-amount').data('total-cents') : '<?= ($amount); ?>',
                     email: $('#store-email').val() ? $('#store-email').val() : '<?= ($email); ?>'
                 });
                 e.preventDefault();
