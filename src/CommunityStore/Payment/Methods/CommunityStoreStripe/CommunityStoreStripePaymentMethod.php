@@ -83,7 +83,7 @@ class CommunityStoreStripePaymentMethod extends PaymentMethod
         $this->set('form',Core::make("helper/form"));
         $this->set('amount',  number_format(StoreCalculator::getGrandTotal() * 100, 0, '', ''));
 
-        $pmID = PaymentMethod::getByHandle('community_store_stripe')->getPaymentMethodID();
+        $pmID = PaymentMethod::getByHandle('community_store_stripe')->getID();
         $this->set('pmID',$pmID);
         $years = array();
         $year = date("Y");
@@ -129,13 +129,9 @@ class CommunityStoreStripePaymentMethod extends PaymentMethod
         }
     }
 
-    public function getPaymentMethodName(){
-        return 'Stripe';
-    }
-
-    public function getPaymentMethodDisplayName()
+    public function getName()
     {
-        return $this->getPaymentMethodName();
+        return 'Stripe';;
     }
     
 }
