@@ -7,12 +7,11 @@ use Config;
 use Exception;
 use Omnipay\Omnipay;
 
-use \Concrete\Package\CommunityStore\Src\CommunityStore\Payment\Method as PaymentMethod;
+use \Concrete\Package\CommunityStore\Src\CommunityStore\Payment\Method as StorePaymentMethod;
 use \Concrete\Package\CommunityStore\Src\CommunityStore\Utilities\Calculator as StoreCalculator;
 use \Concrete\Package\CommunityStore\Src\CommunityStore\Customer\Customer as StoreCustomer;
 
-
-class CommunityStoreStripePaymentMethod extends PaymentMethod
+class CommunityStoreStripePaymentMethod extends StorePaymentMethod
 {
 
     public $gatewayNames = array(
@@ -22,13 +21,13 @@ class CommunityStoreStripePaymentMethod extends PaymentMethod
 
     public function dashboardForm()
     {
-        $this->set('mode', Config::get('community_store_stripe.mode'));
-        $this->set('gateway',Config::get('community_store_stripe.gateway'));
-        $this->set('currency',Config::get('community_store_stripe.currency'));
-        $this->set('testPublicApiKey',Config::get('community_store_stripe.testPublicApiKey'));
-        $this->set('livePublicApiKey',Config::get('community_store_stripe.livePublicApiKey'));
-        $this->set('testPrivateApiKey',Config::get('community_store_stripe.testPrivateApiKey'));
-        $this->set('livePrivateApiKey',Config::get('community_store_stripe.livePrivateApiKey'));
+        $this->set('stripeMode', Config::get('community_store_stripe.mode'));
+        $this->set('stripeGateway',Config::get('community_store_stripe.gateway'));
+        $this->set('stripeCurrency',Config::get('community_store_stripe.currency'));
+        $this->set('stripeTestPublicApiKey',Config::get('community_store_stripe.testPublicApiKey'));
+        $this->set('stripeLivePublicApiKey',Config::get('community_store_stripe.livePublicApiKey'));
+        $this->set('stripeTestPrivateApiKey',Config::get('community_store_stripe.testPrivateApiKey'));
+        $this->set('stripeLivePrivateApiKey',Config::get('community_store_stripe.livePrivateApiKey'));
         $this->set('form',Core::make("helper/form"));
 
         $gateways = array(
@@ -36,7 +35,7 @@ class CommunityStoreStripePaymentMethod extends PaymentMethod
             'stripe_form'=>'Form'
         );
 
-        $this->set('gateways',$gateways);
+        $this->set('stripeGateways',$gateways);
 
         $currencies = array(
         	'USD'=>t('US Dollars'),
@@ -47,18 +46,18 @@ class CommunityStoreStripePaymentMethod extends PaymentMethod
             'CHF'=>t('Swiss Franc')
         );
 
-        $this->set('currencies',$currencies);
+        $this->set('stripeCurrencies',$currencies);
     }
     
     public function save($data)
     {
-        Config::save('community_store_stripe.mode',$data['mode']);
-        Config::save('community_store_stripe.gateway',$data['gateway']);
-        Config::save('community_store_stripe.currency',$data['currency']);
-        Config::save('community_store_stripe.testPublicApiKey',$data['testPublicApiKey']);
-        Config::save('community_store_stripe.livePublicApiKey',$data['livePublicApiKey']);
-        Config::save('community_store_stripe.testPrivateApiKey',$data['testPrivateApiKey']);
-        Config::save('community_store_stripe.livePrivateApiKey',$data['livePrivateApiKey']);
+        Config::save('community_store_stripe.mode',$data['stripeMode']);
+        Config::save('community_store_stripe.gateway',$data['stripeGateway']);
+        Config::save('community_store_stripe.currency',$data['stripeCurrency']);
+        Config::save('community_store_stripe.testPublicApiKey',$data['stripeTestPublicApiKey']);
+        Config::save('community_store_stripe.livePublicApiKey',$data['stripeLivePublicApiKey']);
+        Config::save('community_store_stripe.testPrivateApiKey',$data['stripeTestPrivateApiKey']);
+        Config::save('community_store_stripe.livePrivateApiKey',$data['stripeLivePrivateApiKey']);
     }
     public function validate($args,$e)
     {
@@ -83,7 +82,7 @@ class CommunityStoreStripePaymentMethod extends PaymentMethod
         $this->set('form',Core::make("helper/form"));
         $this->set('amount',  number_format(StoreCalculator::getGrandTotal() * 100, 0, '', ''));
 
-        $pmID = PaymentMethod::getByHandle('community_store_stripe')->getID();
+        $pmID = StorePaymentMethod::getByHandle('community_store_stripe')->getID();
         $this->set('pmID',$pmID);
         $years = array();
         $year = date("Y");
@@ -120,9 +119,6 @@ class CommunityStoreStripePaymentMethod extends PaymentMethod
         if ($response->isSuccessful()) {
             // payment was successful: update database
             return array('error'=>0, 'transactionReference'=>$response->getTransactionReference());
-        } elseif ($response->isRedirect()) {
-            // redirect to offsite payment gateway
-            $response->redirect();
         } else {
             // payment failed: display message to customer
             return array('error'=>1,'errorMessage'=> $response->getMessage());
@@ -131,7 +127,7 @@ class CommunityStoreStripePaymentMethod extends PaymentMethod
 
     public function getName()
     {
-        return 'Stripe';;
+        return 'Stripe';
     }
     
 }

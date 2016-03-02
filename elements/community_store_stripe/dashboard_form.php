@@ -2,39 +2,37 @@
 extract($vars);
 ?>
 <div class="form-group">
-    <?=$form->label('currency',t('Currency'))?>
-    <?=$form->select('currency',$currencies,$currency)?>
+    <?=$form->label('stripeCurrency',t('Currency'))?>
+    <?=$form->select('stripeCurrency',$stripeCurrencies,$stripeCurrency)?>
 </div>
 
 <div class="form-group">
-    <?=$form->label('gateways',t('Integration Type'))?>
-    <?=$form->select('gateway',$gateways,$gateway)?>
+    <?=$form->label('stripeGateways',t('Integration Type'))?>
+    <?=$form->select('stripeGateways',$stripeGateways,$stripeGateway)?>
 </div>
 
 <div class="form-group">
-    <?=$form->label('mode',t('Mode'))?>
-    <?=$form->select('mode',array('test'=>t('Test'), 'live'=>t('Live')),$mode)?>
+    <?=$form->label('stripeMode',t('Mode'))?>
+    <?=$form->select('stripeMode',array('test'=>t('Test'), 'live'=>t('Live')),$stripeMode)?>
 </div>
-
 
 
 <div class="form-group">
     <label><?=t("Test Secret Key")?></label>
-    <input type="text" name="testPrivateApiKey" value="<?=$testPrivateApiKey?>" class="form-control">
+    <input type="text" name="stripeTestPrivateApiKey" value="<?=$stripeTestPrivateApiKey?>" class="form-control">
 </div>
 
 <div class="form-group">
     <label><?=t("Test Publishable Key")?></label>
-    <input type="text" name="testPublicApiKey" value="<?=$testPublicApiKey?>" class="form-control">
+    <input type="text" name="stripeTestPublicApiKey" value="<?=$stripeTestPublicApiKey?>" class="form-control">
 </div>
-
 
 <div class="form-group">
     <label><?=t("Live Secret Key")?></label>
-    <input type="text" name="livePrivateApiKey" value="<?=$livePrivateApiKey?>" class="form-control">
+    <input type="text" name="stripeLivePrivateApiKey" value="<?=$stripeLivePrivateApiKey?>" class="form-control">
 </div>
 
 <div class="form-group">
     <label><?=t("Live Publishable Key")?></label>
-    <input type="text" name="livePublicApiKey" value="<?=$livePublicApiKey?>" class="form-control">
+    <input type="text" name="stripeLivePublicApiKey" value="<?=$stripeLivePublicApiKey?>" class="form-control">
 </div>
