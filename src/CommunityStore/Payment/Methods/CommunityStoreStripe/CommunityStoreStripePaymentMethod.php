@@ -94,10 +94,8 @@ class CommunityStoreStripePaymentMethod extends StorePaymentMethod
     
     public function submitPayment()
     {
-        $gatewaytype = Config::get('community_store_stripe.gateway');
         $customer = new StoreCustomer();
-        $email = trim($customer->getEmail());
-
+        
         $gateway = Omnipay::create('Stripe');
         $currency = Config::get('community_store_stripe.currency');
         $mode =  Config::get('community_store_stripe.mode');
@@ -108,12 +106,10 @@ class CommunityStoreStripePaymentMethod extends StorePaymentMethod
             $privateKey = Config::get('community_store_stripe.livePrivateApiKey');
         }
 
-        if ($gatewaytype == 'Stripe') {
-            $gateway->setApiKey($privateKey);
-            $token = $_POST['stripeToken'];
-            $response = $gateway->purchase(['amount' =>  number_format(StoreCalculator::getGrandTotal(), 2, '.', ''), 'currency' => $currency, 'token' => $token])->send();
-        }
-        
+        $gateway->setApiKey($privateKey);
+        $token = $_POST['stripeToken'];
+        $response = $gateway->purchase(['amount' =>  number_format(StoreCalculator::getGrandTotal(), 2, '.', ''), 'currency' => $currency, 'token' => $token])->send();
+
         if ($response->isSuccessful()) {
             // payment was successful: update database
             return array('error'=>0, 'transactionReference'=>$response->getTransactionReference());
