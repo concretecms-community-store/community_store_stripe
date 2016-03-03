@@ -98,9 +98,7 @@ class CommunityStoreStripePaymentMethod extends StorePaymentMethod
         $customer = new StoreCustomer();
         $email = trim($customer->getEmail());
 
-        $gatewaytype = ucfirst(substr($gatewaytype, 0, strpos($gatewaytype, '_')));
-
-        $gateway = Omnipay::create($gatewaytype);
+        $gateway = Omnipay::create('Stripe');
         $currency = Config::get('community_store_stripe.currency');
         $mode =  Config::get('community_store_stripe.mode');
 

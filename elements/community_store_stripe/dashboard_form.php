@@ -7,8 +7,8 @@ extract($vars);
 </div>
 
 <div class="form-group">
-    <?=$form->label('stripeGateways',t('Integration Type'))?>
-    <?=$form->select('stripeGateways',$stripeGateways,$stripeGateway)?>
+    <?=$form->label('stripeGateway',t('Integration Type'))?>
+    <?=$form->select('stripeGateway',$stripeGateways,$stripeGateway)?>
 </div>
 
 <div class="form-group">
