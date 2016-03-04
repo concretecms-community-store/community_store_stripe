@@ -49,7 +49,7 @@ class CommunityStoreStripePaymentMethod extends StorePaymentMethod
         $this->set('stripeCurrencies',$currencies);
     }
     
-    public function save($data)
+    public function save(array $data = [])
     {
         Config::save('community_store_stripe.mode',$data['stripeMode']);
         Config::save('community_store_stripe.gateway',$data['stripeGateway']);
