@@ -41,7 +41,7 @@ class CommunityStoreStripePaymentMethod extends StorePaymentMethod
         	'USD'=>t('US Dollars'),
         	'CAD'=>t('Canadian Dollar'),
         	'AUD'=>t('Australian Dollar'),
-        	'GPB'=>t('British Pound'),
+        	'GBP'=>t('British Pound'),
         	'EUR'=>t('Euro'),
             'CHF'=>t('Swiss Franc')
         );
