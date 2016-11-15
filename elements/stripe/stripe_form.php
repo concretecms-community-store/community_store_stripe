@@ -1,5 +1,5 @@
 <?php defined('C5_EXECUTE') or die(_("Access Denied."));?>
-<script src="<?= URL::to('packages/community_store_stripe/js/jquery.payment.min.js');?>"></script>
+<script src="<?= str_replace('/index.php/', '/', URL::to('packages/community_store_stripe/js/jquery.payment.min.js'));?>"></script>
 <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 
 <script>
