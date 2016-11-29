@@ -1,0 +1,114 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: community_store_stripe 0.9.3\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2016-11-29T09:22:25+00:00\n"
+"PO-Revision-Date: 2016-11-29T09:22:26+00:00\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: packages/community_store_stripe/controller.php:24
+msgid "Stripe Payment Method for Community Store"
+msgstr ""
+
+#: packages/community_store_stripe/controller.php:29
+msgid "Stripe Payment Method"
+msgstr ""
+
+#: packages/community_store_stripe/controller.php:36
+msgid "This package requires that Community Store be installed"
+msgstr ""
+
+#: packages/community_store_stripe/elements/community_store_stripe/checkout_form.php:13
+msgid "API Keys not entered"
+msgstr ""
+
+#: packages/community_store_stripe/elements/community_store_stripe/dashboard_form.php:5
+msgid "Currency"
+msgstr ""
+
+#: packages/community_store_stripe/elements/community_store_stripe/dashboard_form.php:10
+msgid "Integration Type"
+msgstr ""
+
+#: packages/community_store_stripe/elements/community_store_stripe/dashboard_form.php:15
+msgid "Mode"
+msgstr ""
+
+#: packages/community_store_stripe/elements/community_store_stripe/dashboard_form.php:16
+msgid "Test"
+msgstr ""
+
+#: packages/community_store_stripe/elements/community_store_stripe/dashboard_form.php:16
+msgid "Live"
+msgstr ""
+
+#: packages/community_store_stripe/elements/community_store_stripe/dashboard_form.php:21
+msgid "Test Secret Key"
+msgstr ""
+
+#: packages/community_store_stripe/elements/community_store_stripe/dashboard_form.php:26
+msgid "Test Publishable Key"
+msgstr ""
+
+#: packages/community_store_stripe/elements/community_store_stripe/dashboard_form.php:31
+msgid "Live Secret Key"
+msgstr ""
+
+#: packages/community_store_stripe/elements/community_store_stripe/dashboard_form.php:36
+msgid "Live Publishable Key"
+msgstr ""
+
+#: packages/community_store_stripe/elements/stripe/stripe_form.php:109
+msgid "Processing..."
+msgstr ""
+
+#: packages/community_store_stripe/elements/stripe/stripe_form.php:154
+msgid "Complete Order"
+msgstr ""
+
+#: packages/community_store_stripe/elements/stripe/stripe_form.php:167
+#: packages/community_store_stripe/elements/stripe/stripe_form.php:173
+msgid "Card Number"
+msgstr ""
+
+#: packages/community_store_stripe/elements/stripe/stripe_form.php:184
+msgid "Expiration Date"
+msgstr ""
+
+#: packages/community_store_stripe/elements/stripe/stripe_form.php:196
+msgid "CV Code"
+msgstr ""
+
+#: packages/community_store_stripe/elements/stripe/stripe_form.php:201
+msgid "CVC"
+msgstr ""
+
+#: packages/community_store_stripe/src/CommunityStore/Payment/Methods/CommunityStoreStripe/CommunityStoreStripePaymentMethod.php:41
+msgid "US Dollars"
+msgstr ""
+
+#: packages/community_store_stripe/src/CommunityStore/Payment/Methods/CommunityStoreStripe/CommunityStoreStripePaymentMethod.php:42
+msgid "Canadian Dollar"
+msgstr ""
+
+#: packages/community_store_stripe/src/CommunityStore/Payment/Methods/CommunityStoreStripe/CommunityStoreStripePaymentMethod.php:43
+msgid "Australian Dollar"
+msgstr ""
+
+#: packages/community_store_stripe/src/CommunityStore/Payment/Methods/CommunityStoreStripe/CommunityStoreStripePaymentMethod.php:44
+msgid "British Pound"
+msgstr ""
+
+#: packages/community_store_stripe/src/CommunityStore/Payment/Methods/CommunityStoreStripe/CommunityStoreStripePaymentMethod.php:45
+msgid "Euro"
+msgstr ""
+
+#: packages/community_store_stripe/src/CommunityStore/Payment/Methods/CommunityStoreStripe/CommunityStoreStripePaymentMethod.php:46
+msgid "Swiss Franc"
+msgstr ""
