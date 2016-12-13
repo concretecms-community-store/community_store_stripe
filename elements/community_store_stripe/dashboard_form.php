@@ -16,23 +16,22 @@ extract($vars);
     <?=$form->select('stripeMode',array('test'=>t('Test'), 'live'=>t('Live')),$stripeMode)?>
 </div>
 
-
 <div class="form-group">
-    <label><?=t("Test Secret Key")?></label>
+    <?=$form->label('stripeTestPrivateApiKey',t('Test Secret Key'))?>
     <input type="text" name="stripeTestPrivateApiKey" value="<?=$stripeTestPrivateApiKey?>" class="form-control">
 </div>
 
 <div class="form-group">
-    <label><?=t("Test Publishable Key")?></label>
+    <?=$form->label('stripeTestPublicApiKey',t('Test Publishable Key'))?>
     <input type="text" name="stripeTestPublicApiKey" value="<?=$stripeTestPublicApiKey?>" class="form-control">
 </div>
 
 <div class="form-group">
-    <label><?=t("Live Secret Key")?></label>
+    <?=$form->label('stripeLivePrivateApiKey',t('Live Secret Key'))?>
     <input type="text" name="stripeLivePrivateApiKey" value="<?=$stripeLivePrivateApiKey?>" class="form-control">
 </div>
 
 <div class="form-group">
-    <label><?=t("Live Publishable Key")?></label>
+    <?=$form->label('stripeLivePublicApiKey',t('Live Publishable Key'))?>
     <input type="text" name="stripeLivePublicApiKey" value="<?=$stripeLivePublicApiKey?>" class="form-control">
 </div>
