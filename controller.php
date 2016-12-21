@@ -8,13 +8,16 @@ use \Concrete\Package\CommunityStore\Src\CommunityStore\Payment\Method as Paymen
 
 defined('C5_EXECUTE') or die(_("Access Denied."));
 
-require 'vendor/autoload.php';
-
 class Controller extends Package
 {
     protected $pkgHandle = 'community_store_stripe';
     protected $appVersionRequired = '5.7.2';
     protected $pkgVersion = '1.0.2';
+
+    public function on_start()
+    {
+        require 'vendor/autoload.php';
+    }
 
     public function getPackageDescription()
     {
