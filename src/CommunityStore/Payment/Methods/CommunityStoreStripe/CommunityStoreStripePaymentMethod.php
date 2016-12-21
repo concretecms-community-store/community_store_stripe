@@ -3,9 +3,12 @@ namespace Concrete\Package\CommunityStoreStripe\Src\CommunityStore\Payment\Metho
 
 use Concrete\Package\CommunityStore\Controller\SinglePage\Dashboard\Store;
 use Core;
+use Log;
 use Config;
 use Exception;
-use Omnipay\Omnipay;
+use \Stripe\Stripe;
+use \Stripe\Charge;
+use Stripe\Error;
 
 use \Concrete\Package\CommunityStore\Src\CommunityStore\Payment\Method as StorePaymentMethod;
 use \Concrete\Package\CommunityStore\Src\CommunityStore\Utilities\Calculator as StoreCalculator;
@@ -96,7 +99,6 @@ class CommunityStoreStripePaymentMethod extends StorePaymentMethod
     {
         $customer = new StoreCustomer();
         
-        $gateway = Omnipay::create('Stripe');
         $currency = Config::get('community_store_stripe.currency');
         $mode =  Config::get('community_store_stripe.mode');
 
@@ -106,17 +108,56 @@ class CommunityStoreStripePaymentMethod extends StorePaymentMethod
             $privateKey = Config::get('community_store_stripe.livePrivateApiKey');
         }
 
-        $gateway->setApiKey($privateKey);
+        \Stripe\Stripe::setApiKey($privateKey);
         $token = $_POST['stripeToken'];
-        $response = $gateway->purchase(['amount' =>  number_format(StoreCalculator::getGrandTotal(), 2, '.', ''), 'currency' => $currency, 'token' => $token])->send();
+        $genericError = false;
+        
+        try {
+            Log::addEntry('amount is '.StoreCalculator::getGrandTotal());
+            $response = \Stripe\Charge::create(array("amount" => StoreCalculator::getGrandTotal()*100, "currency" => $currency, "source" => $token));
+            return array('error'=>0, 'transactionReference'=>$response->id);
+        } catch(\Stripe\Error\Card $e) {
+            // Since it's a decline, \Stripe\Error\Card will be caught
+            $body = $e->getJsonBody();
+            $err  = $body['error'];
+            return array('error'=>1,'errorMessage'=> $err['message']);
 
-        if ($response->isSuccessful()) {
-            // payment was successful: update database
-            return array('error'=>0, 'transactionReference'=>$response->getTransactionReference());
-        } else {
-            // payment failed: display message to customer
-            return array('error'=>1,'errorMessage'=> $response->getMessage());
+        } catch (\Stripe\Error\RateLimit $e) {
+        // Too many requests made to the API too quickly
+            $genericError = true;
+            $errors[] = $e;
+        } catch (\Stripe\Error\InvalidRequest $e) {
+            $genericError = true;
+            $errors[] = $e;
+        // Invalid parameters were supplied to Stripe's API
+        } catch (\Stripe\Error\Authentication $e) {
+            $genericError = true;
+            $errors[] = $e;
+        // Authentication with Stripe's API failed
+        // (maybe you changed API keys recently)
+        } catch (\Stripe\Error\ApiConnection $e) {
+            $genericError = true;
+            $errors[] = $e;
+        // Network communication with Stripe failed
+        } catch (\Stripe\Error\Base $e) {
+            $genericError = true;
+            $errors[] = $e;
+        // Display a very generic error to the user, and maybe send
+        // yourself an email
+        } catch (Exception $e) {
+            $genericError = true;
+            $errors[] = $e;
+        // Something else happened, completely unrelated to Stripe
         }
+        if ($genericError) {
+            foreach($errors as $error) {
+                $body = $error->getJsonBody();
+                $err  = $body['error'];
+                Log::addEntry('Stripe error.'."\n".'Status is:' . $error->getHttpStatus() . "\n".'Type is:' . $err['type'] . "\n".'Code is:' . $err['code'] . "\n".'Param is:' . $err['param'] . "\n".'Message is:' . $err['message'] . "\n", t('Community Store Stripe'));
+            }
+           return array('error'=>1,'errorMessage'=> t('Something went wrong with this transation.'));
+        }
+
     }
 
     public function getName()
