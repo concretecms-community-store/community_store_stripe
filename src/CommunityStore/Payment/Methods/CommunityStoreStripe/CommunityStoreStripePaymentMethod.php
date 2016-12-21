@@ -113,7 +113,6 @@ class CommunityStoreStripePaymentMethod extends StorePaymentMethod
         $genericError = false;
         
         try {
-            Log::addEntry('amount is '.StoreCalculator::getGrandTotal());
             $response = \Stripe\Charge::create(array("amount" => StoreCalculator::getGrandTotal()*100, "currency" => $currency, "source" => $token));
             return array('error'=>0, 'transactionReference'=>$response->id);
         } catch(\Stripe\Error\Card $e) {
