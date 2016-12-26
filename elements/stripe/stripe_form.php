@@ -6,25 +6,23 @@
     $(function() {
 
         var form = $('#store-checkout-form-group-payment'),
-            submitButton = form.find(".store-btn-complete-order"),
-            errorContainer = form.find('.store-payment-errors'),
-            errorList = errorContainer.find('ul'),
-            errorHeading = errorContainer.find('h3');
+            submitButton = form.find(".store-btn-complete-order");
+        var stripe_errorContainer = form.find('.stripe-payment-errors');
 
-        $('#cc-number').payment('formatCardNumber');
-        $('#cc-exp').payment('formatCardExpiry');
-        $('#cc-cvc').payment('formatCardCVC');
+        $('#stripe-cc-number').payment('formatCardNumber');
+        $('#stripe-cc-exp').payment('formatCardExpiry');
+        $('#stripe-cc-cvc').payment('formatCardCVC');
 
-        $('#cc-number').bind("keyup change", function(e) {
+        $('#stripe-cc-number').bind("keyup change", function(e) {
             var validcard = $.payment.validateCardNumber($(this).val());
 
             if (validcard) {
                 $(this).closest('.form-group').removeClass('has-error');
             }
-            errorContainer.hide();
+            stripe_errorContainer.hide();
         });
 
-        $('#cc-exp').bind("keyup change", function(e) {
+        $('#stripe-cc-exp').bind("keyup change", function(e) {
             var validcard = $.payment.validateCardNumber($(this).val());
 
             var expiry = $(this).payment('cardExpiryVal');
@@ -33,16 +31,16 @@
             if (validexpiry) {
                 $(this).closest('.form-group').removeClass('has-error');
             }
-            errorContainer.hide();
+            stripe_errorContainer.hide();
         });
 
-        $('#cc-cvc').bind("keyup change", function(e) {
+        $('#stripe-cc-cvc').bind("keyup change", function(e) {
             var validcv = $.payment.validateCardCVC($(this).val());
 
             if (validcv) {
-                $('#cc-cvc').closest('.form-group').removeClass('has-error');
+                $('#stripe-cc-cvc').closest('.form-group').removeClass('has-error');
             }
-            errorContainer.hide();
+            stripe_errorContainer.hide();
         });
 
         Stripe.setPublishableKey('<?= $publicAPIKey; ?>');
@@ -55,43 +53,43 @@
 
                 var allvalid = true;
 
-                var validcard = $.payment.validateCardNumber($('#cc-number').val());
+                var validcard = $.payment.validateCardNumber($('#stripe-cc-number').val());
 
                 if (!validcard) {
-                    $('#cc-number').closest('.form-group').addClass('has-error');
+                    $('#stripe-cc-number').closest('.form-group').addClass('has-error');
                     allvalid = false;
                 } else {
-                    $('#cc-number').closest('.form-group').removeClass('has-error');
+                    $('#stripe-cc-number').closest('.form-group').removeClass('has-error');
                 }
 
-                var expiry = $('#cc-exp').payment('cardExpiryVal');
+                var expiry = $('#stripe-cc-exp').payment('cardExpiryVal');
                 var validexpiry = $.payment.validateCardExpiry(expiry.month, expiry.year);
 
                 if (!validexpiry) {
-                    $('#cc-exp').closest('.form-group').addClass('has-error');
+                    $('#stripe-cc-exp').closest('.form-group').addClass('has-error');
                     allvalid = false;
                 } else {
-                    $('#cc-exp').closest('.form-group').removeClass('has-error');
+                    $('#stripe-cc-exp').closest('.form-group').removeClass('has-error');
                 }
 
-                var validcv = $.payment.validateCardCVC($('#cc-cvc').val());
+                var validcv = $.payment.validateCardCVC($('#stripe-cc-cvc').val());
 
                 if (!validcv) {
-                    $('#cc-cvc').closest('.form-group').addClass('has-error');
+                    $('#stripe-cc-cvc').closest('.form-group').addClass('has-error');
                     allvalid = false;
                 } else {
-                    $('#cc-cvc').closest('.form-group').removeClass('has-error');
+                    $('#stripe-cc-cvc').closest('.form-group').removeClass('has-error');
                 }
 
                 if (!allvalid) {
                     if (!validcard) {
-                        $('#cc-number').focus()
+                        $('#stripe-cc-number').focus()
                     } else {
                         if (!validexpiry) {
-                            $('#cc-exp').focus()
+                            $('#stripe-cc-exp').focus()
                         } else {
                             if (!validcv) {
-                                $('#cc-cvc').focus()
+                                $('#stripe-cc-cvc').focus()
                             }
                         }
                     }
@@ -100,26 +98,25 @@
                 }
 
                 // Clear previous errors
-                errorList.empty();
-                errorHeading.empty();
-                errorContainer.hide();
+                stripe_errorContainer.empty();
+                stripe_errorContainer.hide();
 
                 // Disable the submit button to prevent multiple clicks
                 submitButton.attr({disabled: true});
                 submitButton.val('<?= t('Processing...'); ?>');
 
                 var ccData = {
-                    number: $('#cc-number').val(),
-                    cvc: $('#cc-cvc').val(),
+                    number: $('#stripe-cc-number').val(),
+                    cvc: $('#stripe-cc-cvc').val(),
                     exp_month: expiry.month,
                     exp_year: expiry.year
                 };
 
                 Stripe.card.createToken(ccData, function stripeResponseHandler(status, response) {
                     if (response.error) {
-                        handleError(response);
+                        stripe_handleError(response);
                     } else {
-                        handleSuccess(response);
+                        stripe_handleSuccess(response);
                     }
                 });
 
@@ -128,7 +125,7 @@
             }
         });
 
-        function handleSuccess(response) {
+        function stripe_handleSuccess(response) {
             // Add the card token to the form
             var token = response.id;
 
@@ -145,9 +142,9 @@
             form.get(0).submit();
         }
 
-        function handleError(response) {
-            errorHeading.text(response.error.message);
-            errorContainer.show();
+        function stripe_handleError(response) {
+            $('<p class="alert alert-danger">').text(response.error.message).appendTo(stripe_errorContainer);
+            stripe_errorContainer.show();
 
             // Re-enable the submit button
             submitButton.removeAttr('disabled');
@@ -161,6 +158,8 @@
 
 <div class="store-credit-card-boxpanel panel panel-default">
     <div class="panel-body">
+        <div style="display:none;" class="store-payment-errors stripe-payment-errors">
+        </div>
         <div class="row">
             <div class="col-xs-12">
                 <div class="form-group">
@@ -169,7 +168,7 @@
                         <input
                             type="tel"
                             class="form-control"
-                            id="cc-number"
+                            id="stripe-cc-number"
                             placeholder="<?= t('Card Number');?>"
                             autocomplete="cc-number"
                             />
@@ -185,7 +184,7 @@
                     <input
                         type="tel"
                         class="form-control"
-                        id="cc-exp"
+                        id="stripe-cc-exp"
                         placeholder="MM / YY"
                         autocomplete="cc-exp"
                         />
@@ -197,16 +196,12 @@
                     <input
                         type="tel"
                         class="form-control"
-                        id="cc-cvc"
+                        id="stripe-cc-cvc"
                         placeholder="<?= t('CVC');?>"
                         autocomplete="off"
                         />
                 </div>
             </div>
-        </div>
-        <div style="display:none;" class="store-payment-errors">
-            <h3></h3>
-            <ul></ul>
         </div>
     </div>
 </div>
