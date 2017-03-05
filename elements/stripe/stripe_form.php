@@ -102,7 +102,7 @@
                 stripe_errorContainer.hide();
 
                 // Disable the submit button to prevent multiple clicks
-                submitButton.attr({disabled: true});
+                submitButton.prop('disabled', true);
                 submitButton.val('<?= t('Processing...'); ?>');
 
                 var ccData = {

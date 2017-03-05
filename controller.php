@@ -16,7 +16,7 @@ class Controller extends Package
 
     public function on_start()
     {
-        require 'vendor/autoload.php';
+        require __DIR__ . '/vendor/autoload.php';
     }
 
     public function getPackageDescription()
