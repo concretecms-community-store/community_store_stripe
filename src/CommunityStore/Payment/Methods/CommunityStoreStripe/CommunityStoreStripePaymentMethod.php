@@ -154,7 +154,7 @@ class CommunityStoreStripePaymentMethod extends StorePaymentMethod
                 $err  = $body['error'];
                 Log::addEntry('Stripe error.'."\n".'Status is:' . $error->getHttpStatus() . "\n".'Type is:' . $err['type'] . "\n".'Code is:' . $err['code'] . "\n".'Param is:' . $err['param'] . "\n".'Message is:' . $err['message'] . "\n", t('Community Store Stripe'));
             }
-           return array('error'=>1,'errorMessage'=> t('Something went wrong with this transation.'));
+           return array('error'=>1,'errorMessage'=> t('Something went wrong with this transaction.'));
         }
 
     }
