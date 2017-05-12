@@ -1,5 +1,5 @@
-<?php defined('C5_EXECUTE') or die(_("Access Denied."));?>
-<script src="<?= str_replace('/index.php/', '/', URL::to('packages/community_store_stripe/js/jquery.payment.min.js'));?>"></script>
+<?php defined('C5_EXECUTE') or die(_("Access Denied.")); ?>
+<script src="<?= str_replace('/index.php/', '/', URL::to('packages/community_store_stripe/js/jquery.payment.min.js')); ?>"></script>
 <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 
 <script>
@@ -9,40 +9,85 @@
             submitButton = form.find(".store-btn-complete-order");
         var stripe_errorContainer = form.find('.stripe-payment-errors');
 
-        $('#stripe-cc-number').payment('formatCardNumber');
-        $('#stripe-cc-exp').payment('formatCardExpiry');
-        $('#stripe-cc-cvc').payment('formatCardCVC');
+        var cardField = $('#stripe-cc-number'),
+            expField = $('#stripe-cc-exp'),
+            cvcField = $('#stripe-cc-cvc');
 
-        $('#stripe-cc-number').bind("keyup change", function(e) {
+        cardField.payment('formatCardNumber');
+        expField.payment('formatCardExpiry');
+        cvcField.payment('formatCardCVC');
+
+        cardField.bind("keyup change", function(e) {
             var validcard = $.payment.validateCardNumber($(this).val());
-
+            $(this).closest('.form-group').removeClass('has-success').removeClass('has-error');
+            cvcField.closest('.form-group').removeClass('has-success').removeClass('has-error');
             if (validcard) {
-                $(this).closest('.form-group').removeClass('has-error');
+                $(this).closest('.form-group').removeClass('has-error').addClass('has-success');
+                if ($.payment.cardType($(this).val()) === "amex") {
+                    cvcField.attr("placeholder", cvcField.data('amex-placeholder'));
+                    cvcField.data("max-allowed", "4");
+                } else {
+                    cvcField.attr("placeholder", cvcField.data('other-placeholder'));
+                    cvcField.data("max-allowed", "3");
+                }
             }
             stripe_errorContainer.hide();
         });
 
-        $('#stripe-cc-exp').bind("keyup change", function(e) {
-            var validcard = $.payment.validateCardNumber($(this).val());
+        cardField.bind("blur", function(e) {
+            if ($(this).val()) {
+                var validcard = $.payment.validateCardNumber($(this).val());
+                if (!validcard) {
+                    $(this).closest('.form-group').addClass('has-error');
+                    cvcField.data("max-allowed", "0");
+                    cvcField.attr("placeholder", "•••(•)");
+                }
+            }
+        });
 
+        expField.bind("keyup change", function(e) {
+            var validcard = $.payment.validateCardNumber($(this).val());
+            $(this).closest('.form-group').removeClass('has-success').removeClass('has-error');
             var expiry = $(this).payment('cardExpiryVal');
             var validexpiry = $.payment.validateCardExpiry(expiry.month, expiry.year);
 
             if (validexpiry) {
-                $(this).closest('.form-group').removeClass('has-error');
+                $(this).closest('.form-group').removeClass('has-error').addClass('has-success');
             }
             stripe_errorContainer.hide();
         });
 
-        $('#stripe-cc-cvc').bind("keyup change", function(e) {
+        expField.bind("blur", function(e) {
+            if ($(this).val()) {
+                var expiry = $(this).payment('cardExpiryVal');
+                var validexpiry = $.payment.validateCardExpiry(expiry.month, expiry.year);
+                if (!validexpiry) {
+                    $(this).closest('.form-group').addClass('has-error');
+                }
+            }
+        });
+
+        cvcField.bind("keyup change", function(e) {
             var validcv = $.payment.validateCardCVC($(this).val());
-
-            if (validcv) {
-                $('#stripe-cc-cvc').closest('.form-group').removeClass('has-error');
+            var maxAllowed = $(this).data('max-allowed');
+            var validLength = (maxAllowed == 0 && $(this).val().length <= 4) || (maxAllowed >= 0 && $(this).val().length == maxAllowed) ? true : false;
+            $(this).closest('.form-group').removeClass('has-success').removeClass('has-error');
+            if (validcv && validLength) {
+                $(this).closest('.form-group').removeClass('has-error').addClass('has-success');
             }
             stripe_errorContainer.hide();
         });
 
+        cvcField.bind("blur", function(e) {
+            if ($(this).val()) {
+                var validcv = $.payment.validateCardCVC($(this).val());
+                var maxAllowed = $(this).data('max-allowed');
+                var validLength = (maxAllowed == 0 && $(this).val().length <= 4) || (maxAllowed >= 0 && $(this).val().length == maxAllowed) ? true : false;
+                if (!validcv || !validLength) {
+                    $(this).closest('.form-group').addClass('has-error');
+                }
+            }
+        });
         Stripe.setPublishableKey('<?= $publicAPIKey; ?>');
 
         form.submit(function(e) {
@@ -53,43 +98,44 @@
 
                 var allvalid = true;
 
-                var validcard = $.payment.validateCardNumber($('#stripe-cc-number').val());
+                var validcard = $.payment.validateCardNumber(cardField.val());
 
                 if (!validcard) {
-                    $('#stripe-cc-number').closest('.form-group').addClass('has-error');
+                    cardField.closest('.form-group').addClass('has-error');
                     allvalid = false;
                 } else {
-                    $('#stripe-cc-number').closest('.form-group').removeClass('has-error');
+                    cardField.closest('.form-group').removeClass('has-error');
                 }
 
-                var expiry = $('#stripe-cc-exp').payment('cardExpiryVal');
+                var expiry = expField.payment('cardExpiryVal');
                 var validexpiry = $.payment.validateCardExpiry(expiry.month, expiry.year);
 
                 if (!validexpiry) {
-                    $('#stripe-cc-exp').closest('.form-group').addClass('has-error');
+                    expField.closest('.form-group').addClass('has-error');
                     allvalid = false;
                 } else {
-                    $('#stripe-cc-exp').closest('.form-group').removeClass('has-error');
+                    expField.closest('.form-group').removeClass('has-error');
                 }
 
-                var validcv = $.payment.validateCardCVC($('#stripe-cc-cvc').val());
-
-                if (!validcv) {
-                    $('#stripe-cc-cvc').closest('.form-group').addClass('has-error');
+                var validcv = $.payment.validateCardCVC(cvcField.val());
+                var maxAllowed = cvcField.data('max-allowed');
+                var validLength = (maxAllowed == 0 && cvcField.val().length <= 4) || (maxAllowed >= 0 && cvcField.val().length == maxAllowed) ? true : false;
+                if (!validcv || !validLength) {
+                    cvcField.closest('.form-group').addClass('has-error');
                     allvalid = false;
                 } else {
-                    $('#stripe-cc-cvc').closest('.form-group').removeClass('has-error');
+                    cvcField.closest('.form-group').removeClass('has-error');
                 }
 
                 if (!allvalid) {
                     if (!validcard) {
-                        $('#stripe-cc-number').focus()
+                        cardField.focus()
                     } else {
                         if (!validexpiry) {
-                            $('#stripe-cc-exp').focus()
+                            expField.focus()
                         } else {
                             if (!validcv) {
-                                $('#stripe-cc-cvc').focus()
+                                cvcField.focus()
                             }
                         }
                     }
@@ -106,8 +152,8 @@
                 submitButton.val('<?= t('Processing...'); ?>');
 
                 var ccData = {
-                    number: $('#stripe-cc-number').val(),
-                    cvc: $('#stripe-cc-cvc').val(),
+                    number: cardField.val(),
+                    cvc: cvcField.val(),
                     exp_month: expiry.month,
                     exp_year: expiry.year
                 };
@@ -163,13 +209,13 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="form-group">
-                    <label for="cardNumber"><?= t('Card Number');?></label>
+                    <label for="cardNumber"><?= t('Card Number'); ?></label>
                     <div class="input-group">
                         <input
                             type="tel"
                             class="form-control"
                             id="stripe-cc-number"
-                            placeholder="<?= t('Card Number');?>"
+                            placeholder="•••• •••• •••• ••••"
                             autocomplete="cc-number"
                             />
                         <span class="input-group-addon"><i class="fa fa-credit-card"></i></span>
@@ -180,7 +226,7 @@
         <div class="row">
             <div class="col-xs-7 col-md-7">
                 <div class="form-group">
-                    <label for="cardExpiry"><?= t('Expiration Date');?></label>
+                    <label for="cardExpiry"><?= t('Expiration Date'); ?></label>
                     <input
                         type="tel"
                         class="form-control"
@@ -192,12 +238,15 @@
             </div>
             <div class="col-xs-5 col-md-5 pull-right">
                 <div class="form-group">
-                    <label for="cardCVC"><?= t('CV Code');?></label>
+                    <label for="cardCVC"><?= t('CV Code'); ?></label>
                     <input
                         type="tel"
                         class="form-control"
                         id="stripe-cc-cvc"
-                        placeholder="<?= t('CVC');?>"
+                        placeholder="•••(•)"
+                        data-other-placeholder="••• <?= t('3 numbers in the back'); ?>"
+                        data-amex-placeholder="•••• <?= t('4 numbers in the front'); ?>"
+                        data-max-allowed="0"
                         autocomplete="off"
                         />
                 </div>
