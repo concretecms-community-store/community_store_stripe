@@ -244,8 +244,8 @@
                         class="form-control"
                         id="stripe-cc-cvc"
                         placeholder="•••(•)"
-                        data-other-placeholder="••• <?= t('3 numbers in the back'); ?>"
-                        data-amex-placeholder="•••• <?= t('4 numbers in the front'); ?>"
+                        data-other-placeholder="••• <?= t('3 numbers on the back'); ?>"
+                        data-amex-placeholder="•••• <?= t('4 numbers on the front'); ?>"
                         data-max-allowed="0"
                         autocomplete="off"
                         />
