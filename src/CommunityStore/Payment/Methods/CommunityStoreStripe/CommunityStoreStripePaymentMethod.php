@@ -200,6 +200,10 @@ class CommunityStoreStripePaymentMethod extends StorePaymentMethod
         }
     }
 
+    public function getPaymentMinimum() {
+        return 0.5;
+    }
+
     public function getName()
     {
         return 'Stripe';
