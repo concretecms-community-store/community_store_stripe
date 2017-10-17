@@ -3,8 +3,7 @@
 <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 
 <script>
-    $(function() {
-
+    $(window).on('load', function() {
         var form = $('#store-checkout-form-group-payment'),
             submitButton = form.find(".store-btn-complete-order");
         var stripe_errorContainer = form.find('.stripe-payment-errors');

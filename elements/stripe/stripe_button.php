@@ -2,7 +2,7 @@
 <script src="https://checkout.stripe.com/checkout.js"></script>
 <input type="hidden" value="" name="stripeToken" id="stripeToken" />
 <script>
-    $(document).ready(function() {
+    $(window).on('load', function() {
         var handler = StripeCheckout.configure({
             key: '<?= $publicAPIKey; ?>',
             locale: 'auto',
