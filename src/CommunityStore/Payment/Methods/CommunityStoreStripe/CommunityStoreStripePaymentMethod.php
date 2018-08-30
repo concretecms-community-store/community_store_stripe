@@ -1,7 +1,6 @@
 <?php
 namespace Concrete\Package\CommunityStoreStripe\Src\CommunityStore\Payment\Methods\CommunityStoreStripe;
 
-use Concrete\Package\CommunityStore\Controller\SinglePage\Dashboard\Store;
 use Core;
 use Log;
 use Config;
@@ -9,10 +8,12 @@ use Exception;
 use Stripe\Stripe;
 use Stripe\Charge;
 use Stripe\Error;
+use Session;
 use Concrete\Package\CommunityStore\Src\CommunityStore\Payment\Method as StorePaymentMethod;
 use Concrete\Package\CommunityStore\Src\CommunityStore\Utilities\Calculator as StoreCalculator;
 use Concrete\Package\CommunityStore\Src\CommunityStore\Customer\Customer as StoreCustomer;
 use Concrete\Package\CommunityStore\Src\CommunityStore\Utilities\Price as StorePrice;
+use \Concrete\Package\CommunityStore\Src\CommunityStore\Cart\Cart as StoreCart;
 
 class CommunityStoreStripePaymentMethod extends StorePaymentMethod
 {
@@ -54,11 +55,6 @@ class CommunityStoreStripePaymentMethod extends StorePaymentMethod
             'TRY' => t('Turkish Lira'),
             'VND' => t('Vietnamese Dong'),
         ];
-    }
-
-    private function getCurrencyMultiplier($currency)
-    {
-        return StorePrice::isZeroDecimalCurrency($currency) ? 1 : 100;
     }
 
     public function dashboardForm()
@@ -153,7 +149,24 @@ class CommunityStoreStripePaymentMethod extends StorePaymentMethod
                 $amount = round(StoreCalculator::getGrandTotal(), 2);
             }
 
-            $response = \Stripe\Charge::create(["amount" => $amount * $currencyMultiplier, "currency" => $currency, "source" => $token]);
+            $cart = StoreCart::getCart();
+
+            if ($cart) {
+                foreach ($cart as $item) {
+                    $products[] = $item['product']['object']->getName() . ($item['product']['object']->getSKU() ? '(' . $item['product']['object']->getSKU() . ')' : '') .  ($item['product']['qty'] > 1 ? ' x' . $item['product']['qty'] : '') ;
+                }
+
+                $transactionDescription = implode(', ' , $products);
+            }
+
+            $response = \Stripe\Charge::create([
+                "amount" => $amount * $currencyMultiplier,
+                "currency" => $currency,
+                "source" => $token,
+                "description"=>$transactionDescription,
+                "statement_descriptor"=> substr(\Config::get('concrete.site'), 0, 22)
+
+            ]);
 
             return ['error' => 0, 'transactionReference' => $response->id];
         } catch (\Stripe\Error\Card $e) {
