@@ -17,13 +17,18 @@ extract($vars);
 </div>
 
 <div class="form-group">
+    <?=$form->label('stripeTestPublicApiKey', t('Test Publishable Key'))?>
+    <input type="text" name="stripeTestPublicApiKey" value="<?=$stripeTestPublicApiKey?>" class="form-control">
+</div>
+
+<div class="form-group">
     <?=$form->label('stripeTestPrivateApiKey', t('Test Secret Key'))?>
     <input type="text" name="stripeTestPrivateApiKey" value="<?=$stripeTestPrivateApiKey?>" class="form-control">
 </div>
 
 <div class="form-group">
-    <?=$form->label('stripeTestPublicApiKey', t('Test Publishable Key'))?>
-    <input type="text" name="stripeTestPublicApiKey" value="<?=$stripeTestPublicApiKey?>" class="form-control">
+    <?=$form->label('stripeLivePublicApiKey', t('Live Publishable Key'))?>
+    <input type="text" name="stripeLivePublicApiKey" value="<?=$stripeLivePublicApiKey?>" class="form-control">
 </div>
 
 <div class="form-group">
@@ -31,7 +36,3 @@ extract($vars);
     <input type="text" name="stripeLivePrivateApiKey" value="<?=$stripeLivePrivateApiKey?>" class="form-control">
 </div>
 
-<div class="form-group">
-    <?=$form->label('stripeLivePublicApiKey', t('Live Publishable Key'))?>
-    <input type="text" name="stripeLivePublicApiKey" value="<?=$stripeLivePublicApiKey?>" class="form-control">
-</div>
