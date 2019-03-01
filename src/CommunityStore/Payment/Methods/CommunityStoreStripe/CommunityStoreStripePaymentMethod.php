@@ -20,6 +20,7 @@ class CommunityStoreStripePaymentMethod extends StorePaymentMethod
     public $gatewayNames = [
         'stripe_button' => 'Stripe',
         'stripe_form' => 'Stripe',
+        'stripe_form_elements' => 'Stripe',
     ];
 
     private function getCurrencies()
@@ -69,6 +70,7 @@ class CommunityStoreStripePaymentMethod extends StorePaymentMethod
         $this->set('form', Core::make("helper/form"));
 
         $gateways = [
+			'stripe_form_elements' => 'Form: Stripe.js API v3 Elements',
             'stripe_button' => 'Button',
             'stripe_form' => 'Form',
         ];
